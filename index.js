@@ -38,18 +38,19 @@ async function run() {
 
         app.post('/postToys', async (req, res) => {
             const body = req.body
+            // body.name = Date()
             const result = await productCollection.insertOne(body)
             res.send(result)
         })
 
 
         app.get('/alltoys', async (req, res) => {
-            const result = await productCollection.find({}).toArray();
+            const result = await productCollection.find({}).sort({ name: 1 }).limit(20).toArray();
             res.send(result)
         })
 
         app.get('/mytoys/:email', async (req, res) => {
-            const result = await productCollection.find({ email: req.params.email }).toArray()
+            const result = await productCollection.find({ email: req.params.email }).sort({ name: 1 }).toArray()
             res.send(result)
         })
 
