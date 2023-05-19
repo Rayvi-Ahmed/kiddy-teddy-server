@@ -35,6 +35,19 @@ async function run() {
         const db = client.db('AllProduct')
         const productCollection = db.collection('AddedProduct')
 
+        const indexKey = { productName: 1 }
+        const indexOptions = { name: "productName" }
+
+        const result = productCollection.createIndex(indexKey, indexOptions);
+
+        app.get('/toySearch/:text', async (req, res) => {
+            const searchText = req.params.text
+            const result = await productCollection.find({ productName: { $regex: searchText, $options: "i" } }).toArray()
+            res.send(result)
+        })
+
+
+
 
         app.post('/postToys', async (req, res) => {
             const body = req.body
