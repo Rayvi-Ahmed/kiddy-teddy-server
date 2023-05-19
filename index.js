@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require('dotenv').config()
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 5000;
 
@@ -62,10 +62,47 @@ async function run() {
             res.send(result)
         })
 
+        app.get('/alltoys/:id', async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: new ObjectId(id) }
+            const result = await productCollection.findOne(query).toArray()
+            res.send(result)
+        })
+
+
         app.get('/mytoys/:email', async (req, res) => {
             const result = await productCollection.find({ email: req.params.email }).sort({ name: 1 }).toArray()
             res.send(result)
         })
+
+        app.delete('/mytoys/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await productCollection.deleteOne(query)
+            res.send(result)
+        })
+
+
+
+
+        app.put('/mytoys/:id', async (req, res) => {
+            const id = req.params.id;
+            const filter = { _id: ObjectId(id) };
+            const body = req.body;
+            const option = { upsert: true };
+
+            const updateProduct = {
+                $set: {
+                    Category: body.Category,
+                    Quantity: body.Quantity,
+                    price: body.price
+                },
+            };
+
+            const updateReview = await reviewCollection.updateOne(filter, updateProduct, option)
+
+            res.send(updateReview)
+        });
 
 
 
