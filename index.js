@@ -14,8 +14,6 @@ app.get('/', (req, res) => {
     res.send('animal toy server is running')
 })
 
-
-
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.poxvpxp.mongodb.net/?retryWrites=true&w=majority`;
 
 // Create a MongoClient with a MongoClientOptions object to set the Stable API version
@@ -52,11 +50,17 @@ async function run() {
             res.send(result)
         })
 
-
         app.get('/alltoys', async (req, res) => {
             const result = await productCollection.find({}).sort({ name: 1 }).limit(20).toArray();
             res.send(result)
         })
+
+        app.get('/alltoys/:id', async (req, res) => {
+            const id = req.params.id;
+            const result = await productCollection.findOne({ _id: new ObjectId(id) })
+            res.send(result)
+        })
+
 
         app.get('/alltoys/:category', async (req, res) => {
             if (
@@ -84,9 +88,16 @@ async function run() {
             res.send(result)
         })
 
-        app.put('/mytoys/:id', async (req, res) => {
+        app.get('/mytoys/:id', async (req, res) => {
+            const id = req.params.id
+            const query = { _id: new ObjectId(id) }
+            const result = await productCollection.findOne(query);
+            res.send(result)
+        })
+
+        app.put('/updatetoys/:id', async (req, res) => {
             const id = req.params.id;
-            const filter = { _id: ObjectId(id) };
+            const filter = { _id: new ObjectId(id) };
             const body = req.body;
             const option = { upsert: true };
 
@@ -94,16 +105,15 @@ async function run() {
                 $set: {
                     Category: body.Category,
                     Quantity: body.Quantity,
-                    price: body.price
+                    price: body.price,
+                    description: body.description
                 },
             };
 
-            const updateReview = await reviewCollection.updateOne(filter, updateProduct, option)
+            const updateToys = await productCollection.updateOne(filter, updateProduct, option)
 
-            res.send(updateReview)
+            res.send(updateToys)
         });
-
-
 
         // Send a ping to confirm a successful connection
         await client.db("admin").command({ ping: 1 });
