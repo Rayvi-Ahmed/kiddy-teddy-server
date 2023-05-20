@@ -46,12 +46,8 @@ async function run() {
             res.send(result)
         })
 
-
-
-
         app.post('/postToys', async (req, res) => {
             const body = req.body
-            // body.name = Date()
             const result = await productCollection.insertOne(body)
             res.send(result)
         })
@@ -62,10 +58,16 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/alltoys/:id', async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: new ObjectId(id) }
-            const result = await productCollection.findOne(query).toArray()
+        app.get('/alltoys/:category', async (req, res) => {
+            if (
+                req.params.category === "Teddy Bear" ||
+                req.params.category === "Horse" ||
+                req.params.category === "Dinosaur"
+            ) {
+                const result = await productCollection.find({ Category: req.params.category }).toArray()
+                return res.send(result)
+            }
+            const result = await productCollection.find({}).toArray()
             res.send(result)
         })
 
@@ -81,9 +83,6 @@ async function run() {
             const result = await productCollection.deleteOne(query)
             res.send(result)
         })
-
-
-
 
         app.put('/mytoys/:id', async (req, res) => {
             const id = req.params.id;
