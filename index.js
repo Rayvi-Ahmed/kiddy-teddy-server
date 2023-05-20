@@ -55,11 +55,23 @@ async function run() {
             res.send(result)
         })
 
-        app.get('/alltoys/:id', async (req, res) => {
-            const id = req.params.id;
+
+        app.get('/details/:id', async (req, res) => {
+            const id = req.params.id
+            console.log(req.params)
             const result = await productCollection.findOne({ _id: new ObjectId(id) })
+            console.log(result)
             res.send(result)
+
+
         })
+
+        // app.get('/alltoyDetails/:id', async (req, res) => {
+        //     const id = req.params.id
+        //     const result = await productCollection.findOne({ _id: new ObjectId(id) })
+        //     res.send(result)
+        //     console.log(result)
+        // })
 
 
         app.get('/alltoys/:category', async (req, res) => {
