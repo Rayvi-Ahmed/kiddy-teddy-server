@@ -51,7 +51,7 @@ async function run() {
         })
 
         app.get('/alltoys', async (req, res) => {
-            const result = await productCollection.find({}).sort({ name: 1 }).limit(20).toArray();
+            const result = await productCollection.find({}).sort({ price: 1 }).limit(20).toArray();
             res.send(result)
         })
 
@@ -78,7 +78,8 @@ async function run() {
             if (
                 req.params.category === "Teddy Bear" ||
                 req.params.category === "Horse" ||
-                req.params.category === "Dinosaur"
+                req.params.category === "Dinosaur" ||
+                req.params.category === "Combo Pack"
             ) {
                 const result = await productCollection.find({ Category: req.params.category }).toArray()
                 return res.send(result)
@@ -89,7 +90,7 @@ async function run() {
 
 
         app.get('/mytoys/:email', async (req, res) => {
-            const result = await productCollection.find({ email: req.params.email }).sort({ name: 1 }).toArray()
+            const result = await productCollection.find({ email: req.params.email }).sort({ price: 1 }).toArray()
             res.send(result)
         })
 
@@ -118,7 +119,8 @@ async function run() {
                     Category: body.Category,
                     Quantity: body.Quantity,
                     price: body.price,
-                    description: body.description
+                    description: body.description,
+                    Category: body.Category
                 },
             };
 
